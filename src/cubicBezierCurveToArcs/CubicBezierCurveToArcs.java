@@ -8,7 +8,7 @@ import mathTools.MathTools;
 class CubicBezierCurveToArcsTools {
 
     public static void cubicBezierCurveToArcs(
-            CubicBezierCurve bezierCurve, Circle[] circles) throws Exception{
+            CubicBezierCurve bezierCurve, Circle[] circles) throws Exception {
 
         DoublePoint A0 = bezierCurve.A;
         DoublePoint A1 = bezierCurve.B;
@@ -21,16 +21,23 @@ class CubicBezierCurveToArcsTools {
         System.out.print(G.toString());
     }
 
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception {
 
-        DoublePoint A = new DoublePoint(0,0);
+        /*DoublePoint A = new DoublePoint(0,0);
         DoublePoint controlPointA = new DoublePoint(0.25, Math.sqrt(3)/4.0);
         DoublePoint controlPointB = new DoublePoint(0.75, Math.sqrt(3)/4.0);
-        DoublePoint B = new DoublePoint(1,0);
+        DoublePoint B = new DoublePoint(1,0);*/
 
-        CubicBezierCurve bezierCurve
-                = new CubicBezierCurve(A, controlPointA, controlPointB, B);
+        DoublePoint A = new DoublePoint(0, 0);
+        DoublePoint controlPointA = new DoublePoint(0.25, Math.sqrt(3) / 4.0);
+        DoublePoint controlPointB = new DoublePoint(0.75, Math.sqrt(3) / 4.0);
 
-        cubicBezierCurveToArcs(bezierCurve, null);
+        DoublePoint center = new DoublePoint(0.0, 0.0);
+        double radius = MathTools.getRadiusAndCenterByThreePointsOnCircle(
+                A,controlPointA, controlPointB, center);
+        System.out.println(radius);
+        System.out.println(MathTools.euclideanDistance(A, center));
+        System.out.println(MathTools.euclideanDistance(controlPointA, center));
+        System.out.println(MathTools.euclideanDistance(controlPointB, center));
     }
 }

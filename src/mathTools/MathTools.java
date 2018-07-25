@@ -7,7 +7,7 @@ public class MathTools {
     public static double EPSILON = 1e-9;
 
     public static double crossProductOfThreePoints(
-            DoublePoint p0, DoublePoint p1, DoublePoint p2) {
+            final DoublePoint p0, final DoublePoint p1, final DoublePoint p2) {
 
         double x1 = p1.x - p0.x;
         double y1 = p1.y - p0.y;
@@ -18,15 +18,15 @@ public class MathTools {
     }
 
     public static DoublePoint calculateIntervalPoint(
-            double lambda, DoublePoint A, DoublePoint B) {
+            final double lambda, final DoublePoint A, final DoublePoint B) {
 
         return new DoublePoint(
                 A.x + lambda * (B.x - A.x), A.y + lambda * (B.y - A.y));
     }
 
     public static DoublePoint calculateIntersectionOfTwoLine(
-            DoublePoint start_point_A, DoublePoint end_point_A,
-            DoublePoint start_point_B, DoublePoint end_point_B)
+            final DoublePoint start_point_A, final DoublePoint end_point_A,
+            final DoublePoint start_point_B, final DoublePoint end_point_B)
             throws Exception {
 
         double A1 = crossProductOfThreePoints(
@@ -45,14 +45,15 @@ public class MathTools {
         return calculateIntervalPoint(t, start_point_A, end_point_A);
     }
 
-    public static double euclideanDistance(DoublePoint p, DoublePoint q) {
+    public static double euclideanDistance(
+            final DoublePoint p, final DoublePoint q) {
 
         return Math.sqrt(
                 (p.x - q.x) * (p.x - q.x) + (p.y - q.y) * (p.y - q.y));
     }
 
     public static DoublePoint findInCenterPoint(
-            DoublePoint A, DoublePoint B, DoublePoint C) {
+            final DoublePoint A, final DoublePoint B, final DoublePoint C) {
 
         double a = euclideanDistance(B, C);
         double b = euclideanDistance(A, C);
@@ -69,5 +70,29 @@ public class MathTools {
 
         return new DoublePoint((a * x1 + b * x2 + c * x3) / (a + b + c),
                 (a * y1 + b * y2 + c * y3) / (a + b + c));
+    }
+
+    public static double getRadiusAndCenterByThreePointsOnCircle(
+            final DoublePoint p1, final DoublePoint p2, final DoublePoint p3,
+            DoublePoint center) {
+
+        double a = 2.0 * (p2.x - p1.x);
+        double b = 2.0 * (p2.y - p1.y);
+        double c = p2.x * p2.x + p2.y * p2.y - p1.x * p1.x - p1.y * p1.y;
+        double d = 2.0 * (p3.x - p2.x);
+        double e = 2.0 * (p3.y - p2.y);
+        double f = p3.x * p3.x + p3.y * p3.y - p2.x * p2.x - p2.y * p2.y;
+
+        double x = (b * f - e * c) / (b * d - e * a);
+        double y = (d * c - a * f) / (b * d - e * a);
+
+        if (center == null) {
+            throw new NullPointerException();
+        } else {
+            center.x = x;
+            center.y = y;
+        }
+
+        return Math.sqrt((x - p1.x) * (x - p1.x) + (y - p1.y) * (y - p1.y));
     }
 }
