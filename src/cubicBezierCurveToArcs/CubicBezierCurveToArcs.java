@@ -16,28 +16,33 @@ class CubicBezierCurveToArcsTools {
                 bezierCurve.A, bezierCurve.controlPointA,
                 bezierCurve.controlPointB, bezierCurve.B);
 
+        // Step 1: Find Incenter of the triangle A0A1V
         DoublePoint G = MathTools.findInCenterPoint(A0, V, A1);
 
-        System.out.print(G.toString());
+        // Step 2: Find center of the circle which makes A0, A1, G on the circle
+        DoublePoint center = new DoublePoint(0.0, 0.0);
+        MathTools.getRadiusAndCenterByThreePointsOnCircle(
+                A0, G, A1, center);
+
+        // Step 3: Calculate the unit tangent vector of the circle on point G
+        DoublePoint H = MathTools.calculateUnitTangentVector(center, G);
+
+        System.out.println(H.toString());
+
+        // Step 4:
     }
 
     public static void main(String[] args) throws Exception {
 
-        /*DoublePoint A = new DoublePoint(0,0);
-        DoublePoint controlPointA = new DoublePoint(0.25, Math.sqrt(3)/4.0);
-        DoublePoint controlPointB = new DoublePoint(0.75, Math.sqrt(3)/4.0);
-        DoublePoint B = new DoublePoint(1,0);*/
-
         DoublePoint A = new DoublePoint(0, 0);
         DoublePoint controlPointA = new DoublePoint(0.25, Math.sqrt(3) / 4.0);
         DoublePoint controlPointB = new DoublePoint(0.75, Math.sqrt(3) / 4.0);
+        DoublePoint B = new DoublePoint(2.0, 0);
 
-        DoublePoint center = new DoublePoint(0.0, 0.0);
-        double radius = MathTools.getRadiusAndCenterByThreePointsOnCircle(
-                A,controlPointA, controlPointB, center);
-        System.out.println(radius);
-        System.out.println(MathTools.euclideanDistance(A, center));
-        System.out.println(MathTools.euclideanDistance(controlPointA, center));
-        System.out.println(MathTools.euclideanDistance(controlPointB, center));
+        Circle[] circles = null;
+        CubicBezierCurve bezierCurve
+                = new CubicBezierCurve(A, controlPointA, controlPointB, B);
+
+        cubicBezierCurveToArcs(bezierCurve, circles);
     }
 }

@@ -95,4 +95,28 @@ public class MathTools {
 
         return Math.sqrt((x - p1.x) * (x - p1.x) + (y - p1.y) * (y - p1.y));
     }
+
+    public static DoublePoint calculateUnitTangentVector(
+            final DoublePoint center, final DoublePoint pointOnCircle) {
+
+        double x1 = center.x;
+        double y1 = center.y;
+        double x2 = pointOnCircle.x;
+        double y2 = pointOnCircle.y;
+
+        if (Math.abs(x1 - x2) <= MathTools.EPSILON) {
+            if (y1 < y2) {
+                return new DoublePoint(1.0, 0.0);
+            } else {
+                return new DoublePoint(-1.0, 0.0);
+            }
+        }
+
+        double radius = MathTools.euclideanDistance(center, pointOnCircle);
+
+        double delta_x = x2 - x1;
+        double delta_y = y2 - y1;
+
+        return new DoublePoint(delta_y / radius, -delta_x / radius);
+    }
 }
