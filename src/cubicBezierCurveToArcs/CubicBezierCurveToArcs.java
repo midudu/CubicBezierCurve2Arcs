@@ -77,7 +77,7 @@ class CubicBezierCurveToArcsTools {
         /*Step 8: Judge if the current approximation meets the allowable error*/
         if (d <= allowableError) {
 
-            Arc arc = new Arc();
+            Arc arc = new Arc(center, radius);
 
             return;
         } else {
