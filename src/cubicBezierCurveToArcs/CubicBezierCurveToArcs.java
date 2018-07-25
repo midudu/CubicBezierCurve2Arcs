@@ -12,11 +12,11 @@ class CubicBezierCurveToArcsTools {
 
         DoublePoint A0 = bezierCurve.A;
         DoublePoint A1 = bezierCurve.B;
-        DoublePoint V = MathTools.CalculateIntersectionOfTwoLine(
+        DoublePoint V = MathTools.calculateIntersectionOfTwoLine(
                 bezierCurve.A, bezierCurve.controlPointA,
                 bezierCurve.controlPointB, bezierCurve.B);
 
-        DoublePoint G = MathTools.FindInCenterPoint(A0, V, A1);
+        DoublePoint G = MathTools.findInCenterPoint(A0, V, A1);
 
         System.out.print(G.toString());
     }

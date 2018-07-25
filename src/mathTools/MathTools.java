@@ -6,7 +6,7 @@ public class MathTools {
 
     public static double EPSILON = 1e-9;
 
-    public static double CrossProductOfThreePoints(
+    public static double crossProductOfThreePoints(
             DoublePoint p0, DoublePoint p1, DoublePoint p2) {
 
         double x1 = p1.x - p0.x;
@@ -17,23 +17,23 @@ public class MathTools {
         return x1 * y2 - x2 * y1;
     }
 
-    public static DoublePoint CalculateIntervalPoint(
+    public static DoublePoint calculateIntervalPoint(
             double lambda, DoublePoint A, DoublePoint B) {
 
         return new DoublePoint(
                 A.x + lambda * (B.x - A.x), A.y + lambda * (B.y - A.y));
     }
 
-    public static DoublePoint CalculateIntersectionOfTwoLine(
+    public static DoublePoint calculateIntersectionOfTwoLine(
             DoublePoint start_point_A, DoublePoint end_point_A,
             DoublePoint start_point_B, DoublePoint end_point_B)
             throws Exception {
 
-        double A1 = CrossProductOfThreePoints(
+        double A1 = crossProductOfThreePoints(
                 start_point_A, end_point_A, start_point_B);
-        double A2 = CrossProductOfThreePoints(
+        double A2 = crossProductOfThreePoints(
                 start_point_A, end_point_A, end_point_B);
-        double A3 = CrossProductOfThreePoints(
+        double A3 = crossProductOfThreePoints(
                 start_point_A, start_point_B, end_point_B);
 
         if (Math.abs(A2 - A1) <= MathTools.EPSILON) {
@@ -42,21 +42,21 @@ public class MathTools {
 
         double t = A3 / (A2 - A1);
 
-        return CalculateIntervalPoint(t, start_point_A, end_point_A);
+        return calculateIntervalPoint(t, start_point_A, end_point_A);
     }
 
-    public static double EuclideanDistance(DoublePoint p, DoublePoint q) {
+    public static double euclideanDistance(DoublePoint p, DoublePoint q) {
 
         return Math.sqrt(
                 (p.x - q.x) * (p.x - q.x) + (p.y - q.y) * (p.y - q.y));
     }
 
-    public static DoublePoint FindInCenterPoint(
+    public static DoublePoint findInCenterPoint(
             DoublePoint A, DoublePoint B, DoublePoint C) {
 
-        double a = EuclideanDistance(B, C);
-        double b = EuclideanDistance(A, C);
-        double c = EuclideanDistance(A, B);
+        double a = euclideanDistance(B, C);
+        double b = euclideanDistance(A, C);
+        double c = euclideanDistance(A, B);
 
         double x1 = A.x;
         double y1 = A.y;
