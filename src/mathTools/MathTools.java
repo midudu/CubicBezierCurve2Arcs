@@ -96,7 +96,7 @@ public class MathTools {
         return Math.sqrt((x - p1.x) * (x - p1.x) + (y - p1.y) * (y - p1.y));
     }
 
-    public static DoublePoint calculateUnitTangentVector(
+    public static DoublePoint calculateUnitTangentVectorOfCircle(
             final DoublePoint center, final DoublePoint pointOnCircle) {
 
         double x1 = center.x;
@@ -118,5 +118,68 @@ public class MathTools {
         double delta_y = y2 - y1;
 
         return new DoublePoint(delta_y / radius, -delta_x / radius);
+    }
+
+    public static DoublePoint calculateUnitTangentVectorOfBezierCurve(
+            final DoublePoint A, final DoublePoint controlPointA,
+            final DoublePoint controlPointB, final DoublePoint B,
+            final double t) throws IndexOutOfBoundsException {
+
+        if (t < 0.0 || t > 1.0) {
+            throw new IndexOutOfBoundsException();
+        }
+
+        double x0 = A.x;
+        double y0 = A.y;
+        double x1 = controlPointA.x;
+        double y1 = controlPointA.y;
+        double x2 = controlPointB.x;
+        double y2 = controlPointB.y;
+        double x3 = B.x;
+        double y3 = B.y;
+
+        double s = 1.0 - t;
+
+        double dy_dt = -3 * y0 * s * s + 3 * y1 * (s * s - 2 * t * s)
+                + 3 * y2 * (2 * t * s - t * t) + 3 * y3 * t * t;
+        double dx_dt = -3 * x0 * s * s + 3 * x1 * (s * s - 2 * t * s)
+                + 3 * x2 * (2 * t * s - t * t) + 3 * x3 * t * t;
+
+        if (Math.abs(dx_dt) <= MathTools.EPSILON) {
+            if (dy_dt > 0.0) {
+                return new DoublePoint(0, 1);
+            } else {
+                return new DoublePoint(0, -1);
+            }
+        }
+
+        double hypotenuse = Math.sqrt(dx_dt * dx_dt + dy_dt * dy_dt);
+
+        return new DoublePoint(dx_dt / hypotenuse, dy_dt / hypotenuse);
+    }
+
+    public static DoublePoint calculatePointOnBezierCurve(
+            final DoublePoint A, final DoublePoint controlPointA,
+            final DoublePoint controlPointB, final DoublePoint B,
+            final double t) throws IndexOutOfBoundsException {
+
+        if (t < 0.0 || t > 1.0) {
+            throw new IndexOutOfBoundsException();
+        }
+
+        double s = 1.0 - t;
+
+        double x = s * s * s * A.x + 3 * t * s * s * controlPointA.x
+                + 3 * t * t * s * controlPointB.x + t * t * t * B.x;
+
+        double y = s * s * s * A.y + 3 * t * s * s * controlPointA.y
+                + 3 * t * t * s * controlPointB.y + t * t * t * B.y;
+
+        return new DoublePoint(x, y);
+    }
+
+    public static double dotProduct(final DoublePoint p1, final DoublePoint p2) {
+
+        return p1.x * p2.x + p1.y * p2.y;
     }
 }
