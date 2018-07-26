@@ -1,6 +1,7 @@
 package debugUtil;
 
 import component.Arc;
+import org.opencv.core.Mat;
 import potrace.Curve;
 
 import java.io.File;
@@ -74,7 +75,7 @@ public class WriteFile {
         outputStream.write(content.toString().getBytes());
     }
 
-    public static void WriteCurveAndFittedCircle(
+    public static void WriteCurveAndFittedCircles(
             String dstFilePath, String title,
             ArrayList<ArrayList<Curve[]>> curve,
             String color1, ArrayList<ArrayList<Arc>> arcs,
@@ -151,14 +152,13 @@ public class WriteFile {
             }
         }
 
-        String string = "                   Z\" stroke=\"" + color + "\" fill=\"none\"/>\n";
+        String string = "                   Z\" stroke-width=\"1\" stroke=\"" + color + "\" fill=\"none\"/>\n";
         outputStream.write(string.getBytes());
     }
 
     private static void WriteCircleElement(
             OutputStream outputStream, ArrayList<ArrayList<Arc>> arcs,
             String color) throws IOException {
-
 
         for (ArrayList<Arc> arcArrayList : arcs) {
             for (Arc arc : arcArrayList) {
@@ -171,9 +171,79 @@ public class WriteFile {
                 content += arc.radius;
                 content += "\" stroke=\"";
                 content += color;
-                content += "\" stroke-width=\"2\" fill=\"none\"/>\n";
+                content += "\" stroke-width=\"1\" fill=\"none\"/>\n";
                 outputStream.write(content.getBytes());
             }
         }
+    }
+
+    private static void WriteArcElement(
+            OutputStream outputStream, ArrayList<ArrayList<Arc>> arcs,
+            String color) throws IOException{
+
+        outputStream.write("          <path d=\"\n".getBytes());
+
+        for (ArrayList<Arc> arcArrayList : arcs) {
+            for (Arc arc : arcArrayList) {
+
+                double startXPosition
+                        = arc.center.x + arc.radius * Math.cos(arc.startAngle);
+                double startYPosition
+                        = arc.center.y + arc.radius * Math.sin(arc.startAngle);
+
+                double endXPosition
+                        = arc.center.x + arc.radius * Math.cos(arc.endAngle);
+                double endYPosition
+                        = arc.center.y + arc.radius * Math.sin(arc.endAngle);
+
+                String content1 = "                   M " + String.valueOf(startYPosition)
+                        + " " + String.valueOf(startXPosition) + "\n";
+                String content2 = "                   A ";
+                content2 += String.valueOf(arc.radius) + " " + String.valueOf(arc.radius);
+                content2 += " 0 0 ";
+
+                if (arc.endAngle <= arc.startAngle) {
+                    content2 += "1 ";
+                } else {
+                    content2 += "0 ";
+                }
+
+                content2 += String.valueOf(endYPosition) + " " + String.valueOf(endXPosition) + "\n";
+                outputStream.write(content1.getBytes());
+                outputStream.write(content2.getBytes());
+            }
+        }
+
+        String string = "                   \" stroke-width=\"1\" stroke=\"" + color + "\" fill=\"none\"/>\n";
+        outputStream.write(string.getBytes());
+    }
+
+    public static void WriteCurveAndFittedArcs(
+            String dstFilePath, String title,
+            ArrayList<ArrayList<Curve[]>> curve,
+            String color1, ArrayList<ArrayList<Arc>> arcs,
+            String color2) throws IOException {
+
+        File file = new File(dstFilePath);
+        if (file.exists()) {
+            boolean deleteResult = file.delete();
+            if (!deleteResult) {
+                throw new IOException();
+            }
+        }
+
+        OutputStream outputStream = Files.newOutputStream(Paths.get(dstFilePath),
+                StandardOpenOption.CREATE_NEW);
+
+        WriteHeaderPartForHtmlWithInlineSvg(outputStream, title);
+
+        WriteCurveElement(outputStream, curve, color1);
+
+        WriteArcElement(outputStream, arcs, color2);
+
+        WriteTailPartForHtmlWithInlineSvg(outputStream);
+
+        outputStream.flush();
+        outputStream.close();
     }
 }

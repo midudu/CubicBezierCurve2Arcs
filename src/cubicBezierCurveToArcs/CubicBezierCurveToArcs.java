@@ -95,6 +95,13 @@ class CubicBezierCurveToArcsTools {
             double startAngle = MathTools.calculateAngleToXAxis(center, newA);
             double endAngle = MathTools.calculateAngleToXAxis(center, newB);
 
+            while (endAngle < startAngle - Math.PI) {
+                endAngle += 2.0 * Math.PI;
+            }
+            while (endAngle > startAngle + Math.PI) {
+                endAngle -= 2.0 * Math.PI;
+            }
+
             Arc arc = new Arc(center, radius, startAngle, endAngle);
             arcs.add(arc);
 
@@ -143,7 +150,7 @@ class CubicBezierCurveToArcsTools {
         String dllPath = "C:\\OpenCV\\opencv\\build\\java\\x64\\opencv_java320.dll";
         System.load(dllPath);
 
-        double allowableError = 0.1;
+        double allowableError = 0.01;
 
         String srcImagePath = "E:\\Cpp_Project\\Potrace\\resources\\33.png";
         Mat srcImage = Imgcodecs.imread(srcImagePath);
@@ -185,11 +192,16 @@ class CubicBezierCurveToArcsTools {
             }
         }
 
-        WriteFile.WriteCurveAndFittedCircle(
+        /*WriteFile.WriteCurveAndFittedCircles(
                 "4.html", "hahaha",
+                ListOfCurveArrays, "#FF0000",
+                arcsList, "#0000FF");*/
+
+        WriteFile.WriteCurveAndFittedArcs(
+                "5.html", "hahaha",
                 ListOfCurveArrays, "#FF0000",
                 arcsList, "#0000FF");
 
-        System.out.println("Completed");
+        System.out.println("Completed!");
     }
 }

@@ -190,13 +190,7 @@ public class MathTools {
         double delta_x = point.x - center.x;
         double delta_y = point.y - center.y;
 
-        double angle = Math.atan2(delta_y, delta_x);
-
-        if (angle < 0.0) {
-            angle += 2 * Math.PI;
-        }
-
-        return angle;
+        return Math.atan2(delta_y, delta_x);
     }
 
     // Below is for test
