@@ -93,9 +93,9 @@ public class WriteFile {
 
         WriteHeaderPartForHtmlWithInlineSvg(outputStream, title);
 
-        WriteCurveElement(outputStream, curve, color1);
-
         WriteCircleElement(outputStream, arcs, color2);
+
+        WriteCurveElement(outputStream, curve, color1);
 
         WriteTailPartForHtmlWithInlineSvg(outputStream);
 
@@ -159,21 +159,19 @@ public class WriteFile {
             OutputStream outputStream, ArrayList<ArrayList<Arc>> arcs,
             String color) throws IOException {
 
-        /*<circle cx="100" cy="50" r="40" stroke="black"
-        stroke-width="2" fill="red"/>*/
 
         for (ArrayList<Arc> arcArrayList : arcs) {
             for (Arc arc : arcArrayList) {
 
-                String content = "<circle cx=\"";
-                content += arc.center.x;
-                content += "\" cy=\"";
+                String content = "  <circle cx=\"";
                 content += arc.center.y;
-                content += " r=";
+                content += "\" cy=\"";
+                content += arc.center.x;
+                content += "\" r=\"";
                 content += arc.radius;
                 content += "\" stroke=\"";
                 content += color;
-                content += "\" stroke-width=\"2\" fill=\"red\"/>";
+                content += "\" stroke-width=\"2\" fill=\"none\"/>\n";
                 outputStream.write(content.getBytes());
             }
         }

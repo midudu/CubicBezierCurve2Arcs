@@ -40,7 +40,16 @@ class CubicBezierCurveToArcsTools {
             final ArrayList<Arc> arcs, final double allowableError)
             throws Exception {
 
-        /*Step 1: Calculate the unit tangent vector of the Bezier curve
+        /*Step 1: Calculate the new start point and the new end point of the
+                current circumstance*/
+        DoublePoint newA
+                = MathTools.calculatePointOnBezierCurve(A, controlPointA,
+                controlPointB, B, startT);
+        DoublePoint newB
+                = MathTools.calculatePointOnBezierCurve(A, controlPointA,
+                controlPointB, B, endT);
+
+        /*Step 2: Calculate the unit tangent vector of the Bezier curve
                  on the start point and the end point*/
         DoublePoint unitTangentVector0 =
                 MathTools.calculateUnitTangentVectorOfBezierCurve(
@@ -51,36 +60,36 @@ class CubicBezierCurveToArcsTools {
                         A, controlPointA, controlPointB, B, endT);
 
         DoublePoint adjacentA = new DoublePoint(
-                A.x + unitTangentVector0.x, A.y + unitTangentVector0.x);
+                newA.x + unitTangentVector0.x, newA.y + unitTangentVector0.y);
         DoublePoint adjacentB = new DoublePoint(
-                B.x + unitTangentVector1.x, B.y + unitTangentVector1.x);
+                newB.x + unitTangentVector1.x, newB.y + unitTangentVector1.y);
 
-        /*Step 2: Calculate the intersection of the two tangent line from the
+        /*Step 3: Calculate the intersection of the two tangent line from the
                 start point and the end point*/
         DoublePoint V = MathTools.calculateIntersectionOfTwoLine(
-                A, adjacentA, adjacentB, B);
+                newA, adjacentA, adjacentB, newB);
 
-        /*Step 3: Find incenter of the triangle A0A1V*/
-        DoublePoint G = MathTools.findInCenterPoint(A, V, B);
+        /*Step 4: Find incenter of the triangle A0A1V*/
+        DoublePoint G = MathTools.findInCenterPoint(newA, V, newB);
 
-        /*Step 4: Find center of the circle which makes A0, A1, G on the circle*/
+        /*Step 5: Find center of the circle which makes A0, A1, G on the circle*/
         DoublePoint center = new DoublePoint(0.0, 0.0);
         double radius = MathTools.getRadiusAndCenterByThreePointsOnCircle(
-                A, G, B, center);
+                newA, G, newB, center);
 
-        /*Step 5: Calculate the unit tangent vector of the circle on point G*/
+        /*Step 6: Calculate the unit tangent vector of the circle on point G*/
         DoublePoint H = MathTools.calculateUnitTangentVectorOfCircle(center, G);
 
-        /*Step 6: Calculate t*/
+        /*Step 7: Calculate t*/
         double t = findT(A, controlPointA, controlPointB, B, H, G,
                 MathTools.EPSILON, startT, endT);
 
-        /*Step 7: Calculate d*/
+        /*Step 8: Calculate d*/
         DoublePoint Q_t = MathTools.calculatePointOnBezierCurve(
                 A, controlPointA, controlPointB, B, t);
         double d = MathTools.euclideanDistance(Q_t, G);
 
-        /*Step 8: Judge if the current approximation meets the allowable error*/
+        /*Step 9: Judge if the current approximation meets the allowable error*/
         if (d <= allowableError) {
 
             Arc arc = new Arc(center, radius, 0.0, 0.0);
@@ -101,6 +110,13 @@ class CubicBezierCurveToArcsTools {
                                 final DoublePoint controlPointB, final DoublePoint B,
                                 final DoublePoint H, final DoublePoint G,
                                 final double epsilon, double startT, double endT) {
+
+        DoublePoint Q_t0 = MathTools.calculatePointOnBezierCurve(
+                A, controlPointA, controlPointB, B, startT);
+        double f0 = MathTools.dotProduct(Q_t0, H) - MathTools.dotProduct(G, H);
+        DoublePoint Q_t1 = MathTools.calculatePointOnBezierCurve(
+                A, controlPointA, controlPointB, B, endT);
+        double f1 = MathTools.dotProduct(Q_t1, H) - MathTools.dotProduct(G, H);
 
         while (true) {
 
@@ -136,7 +152,7 @@ class CubicBezierCurveToArcsTools {
 
         ArrayList<ArrayList<Arc>> arcsList = new ArrayList<>();
 
-        /*for (ArrayList<Curve[]> curveArrayList : ListOfCurveArrays) {
+        for (ArrayList<Curve[]> curveArrayList : ListOfCurveArrays) {
             for (Curve[] curves : curveArrayList) {
                 for (Curve curve : curves) {
 
@@ -164,7 +180,7 @@ class CubicBezierCurveToArcsTools {
                     }
                 }
             }
-        }*/
+        }
 
         WriteFile.WriteCurveAndFittedCircle(
                 "2.html", "hahaha",

@@ -11,5 +11,7 @@ public class DoublePoint {
         this.y = y;
     }
 
-
+    public String toString() {
+        return String.valueOf(x) + " " + String.valueOf(y);
+    }
 }
