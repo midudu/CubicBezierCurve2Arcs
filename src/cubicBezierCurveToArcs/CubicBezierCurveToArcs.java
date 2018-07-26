@@ -3,7 +3,13 @@ package cubicBezierCurveToArcs;
 import component.Arc;
 import component.CubicBezierCurve;
 import component.DoublePoint;
+import debugUtil.WriteFile;
 import mathTools.MathTools;
+import org.opencv.core.Mat;
+import org.opencv.imgcodecs.Imgcodecs;
+import potrace.Curve;
+import potrace.Path;
+import potrace.Potrace;
 
 import java.util.ArrayList;
 
@@ -77,9 +83,9 @@ class CubicBezierCurveToArcsTools {
         /*Step 8: Judge if the current approximation meets the allowable error*/
         if (d <= allowableError) {
 
-            Arc arc = new Arc(center, radius);
+            Arc arc = new Arc(center, radius, 0.0, 0.0);
+            arcs.add(arc);
 
-            return;
         } else {
 
             cubicBezierCurveToArcsHelper(
@@ -115,15 +121,56 @@ class CubicBezierCurveToArcsTools {
 
     public static void main(String[] args) throws Exception {
 
-        DoublePoint A = new DoublePoint(0, 0);
-        DoublePoint controlPointA = new DoublePoint(0.25, Math.sqrt(3) / 4.0);
-        DoublePoint controlPointB = new DoublePoint(0.75, Math.sqrt(3) / 4.0);
-        DoublePoint B = new DoublePoint(2.0, 0);
+        String dllPath = "C:\\OpenCV\\opencv\\build\\java\\x64\\opencv_java320.dll";
+        System.load(dllPath);
 
-        Arc[] circles = null;
-        CubicBezierCurve bezierCurve
-                = new CubicBezierCurve(A, controlPointA, controlPointB, B);
+        double allowableError = 0.1;
 
-        cubicBezierCurveToArcs(bezierCurve, circles);
+        String srcImagePath = "E:\\Cpp_Project\\Potrace\\resources\\33.png";
+        Mat srcImage = Imgcodecs.imread(srcImagePath);
+        boolean[][] matrix = Potrace.bitmapToBinary(srcImage);
+
+        ArrayList<ArrayList<Path>> plistp = new ArrayList<>();
+        ArrayList<ArrayList<Curve[]>> ListOfCurveArrays = new ArrayList<>();
+        Potrace.potrace_trace(matrix, plistp, ListOfCurveArrays);
+
+        ArrayList<ArrayList<Arc>> arcsList = new ArrayList<>();
+
+        /*for (ArrayList<Curve[]> curveArrayList : ListOfCurveArrays) {
+            for (Curve[] curves : curveArrayList) {
+                for (Curve curve : curves) {
+
+                    if (curve.getKind() == Curve.CurveKind.Bezier) {
+                        DoublePoint A = new DoublePoint(
+                                curve.getA().getX(), curve.getA().getY());
+
+                        DoublePoint controlPointA = new DoublePoint(
+                                curve.getControlPointA().getX(),
+                                curve.getControlPointA().getY());
+
+                        DoublePoint controlPointB = new DoublePoint(
+                                curve.getControlPointB().getX(),
+                                curve.getControlPointB().getY());
+
+                        DoublePoint B = new DoublePoint(
+                                curve.getB().getX(), curve.getB().getY());
+
+                        CubicBezierCurve bezierCurve = new CubicBezierCurve(
+                                A, controlPointA, controlPointB, B);
+
+                        ArrayList<Arc> arcs = new ArrayList<>();
+                        cubicBezierCurveToArcs(bezierCurve, arcs, allowableError);
+                        arcsList.add(arcs);
+                    }
+                }
+            }
+        }*/
+
+        WriteFile.WriteCurveAndFittedCircle(
+                "2.html", "hahaha",
+                ListOfCurveArrays, "#FF0000",
+                arcsList, "#0000FF");
+
+        System.out.println("Completed");
     }
 }

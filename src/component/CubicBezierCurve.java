@@ -8,7 +8,7 @@ public class CubicBezierCurve {
     public DoublePoint B;
 
     public CubicBezierCurve(DoublePoint A, DoublePoint controlPointA,
-                     DoublePoint controlPointB, DoublePoint B) {
+                            DoublePoint controlPointB, DoublePoint B) {
 
         this.A = A;
         this.controlPointA = controlPointA;
