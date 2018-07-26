@@ -81,7 +81,9 @@ class CubicBezierCurveToArcsTools {
         DoublePoint H = MathTools.calculateUnitTangentVectorOfCircle(center, G);
 
         /*Step 7: Calculate t*/
-        double t = findT(A, controlPointA, controlPointB, B, H, G,
+        /*double t = findTWithDichotomyMethod(A, controlPointA, controlPointB, B, H, G,
+                0.01, startT, endT);*/
+        double t = findTWithNewtonAndRaphsonMethod(A, controlPointA, controlPointB, B, H, G,
                 0.01, startT, endT);
 
         /*Step 8: Calculate d*/
@@ -116,10 +118,11 @@ class CubicBezierCurveToArcsTools {
         }
     }
 
-    private static double findT(final DoublePoint A, final DoublePoint controlPointA,
-                                final DoublePoint controlPointB, final DoublePoint B,
-                                final DoublePoint H, final DoublePoint G,
-                                final double epsilon, double startT, double endT) {
+    private static double findTWithDichotomyMethod(
+            final DoublePoint A, final DoublePoint controlPointA,
+            final DoublePoint controlPointB, final DoublePoint B,
+            final DoublePoint H, final DoublePoint G,
+            final double epsilon, double startT, double endT) {
 
         DoublePoint Q_t0 = MathTools.calculatePointOnBezierCurve(
                 A, controlPointA, controlPointB, B, startT);
@@ -143,6 +146,33 @@ class CubicBezierCurveToArcsTools {
                 startT = middleT;
             }
         }
+    }
+
+    private static double findTWithNewtonAndRaphsonMethod(
+            final DoublePoint A, final DoublePoint controlPointA,
+            final DoublePoint controlPointB, final DoublePoint B,
+            final DoublePoint H, final DoublePoint G,
+            final double epsilon, double startT, double endT) {
+
+        double tn = startT + (endT - startT) / 2.0;
+        DoublePoint Q_tn = MathTools.calculatePointOnBezierCurve(
+                A, controlPointA, controlPointB, B, tn);
+        double fn = MathTools.dotProduct(Q_tn, H) - MathTools.dotProduct(G, H);
+
+        while (Math.abs(fn) > epsilon) {
+
+            DoublePoint d_Q_tn = MathTools.calculateDerivativeOnBezierCurve(
+                    A, controlPointA, controlPointB, B, tn);
+            double d_fn = MathTools.dotProduct(d_Q_tn, H);
+
+            tn = tn - fn / d_fn;
+
+            Q_tn = MathTools.calculatePointOnBezierCurve(
+                    A, controlPointA, controlPointB, B, tn);
+            fn = MathTools.dotProduct(Q_tn, H) - MathTools.dotProduct(G, H);
+        }
+
+        return tn;
     }
 
     public static void main(String[] args) throws Exception {
@@ -198,7 +228,7 @@ class CubicBezierCurveToArcsTools {
                 arcsList, "#0000FF");*/
 
         WriteFile.WriteCurveAndFittedArcs(
-                "5.html", "hahaha",
+                "6.html", "hahaha",
                 ListOfCurveArrays, "#FF0000",
                 arcsList, "#0000FF");
 

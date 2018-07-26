@@ -193,6 +193,34 @@ public class MathTools {
         return Math.atan2(delta_y, delta_x);
     }
 
+    public static DoublePoint calculateDerivativeOnBezierCurve(
+            final DoublePoint A, final DoublePoint controlPointA,
+            final DoublePoint controlPointB, final DoublePoint B,
+            final double t) {
+
+        if (t < 0.0 || t > 1.0) {
+            throw new IndexOutOfBoundsException();
+        }
+
+        double x0 = A.x;
+        double y0 = A.y;
+        double x1 = controlPointA.x;
+        double y1 = controlPointA.y;
+        double x2 = controlPointB.x;
+        double y2 = controlPointB.y;
+        double x3 = B.x;
+        double y3 = B.y;
+
+        double s = 1.0 - t;
+
+        double dy_dt = -3 * y0 * s * s + 3 * y1 * (s * s - 2 * t * s)
+                + 3 * y2 * (2 * t * s - t * t) + 3 * y3 * t * t;
+        double dx_dt = -3 * x0 * s * s + 3 * x1 * (s * s - 2 * t * s)
+                + 3 * x2 * (2 * t * s - t * t) + 3 * x3 * t * t;
+
+        return new DoublePoint(dx_dt, dy_dt);
+    }
+
     // Below is for test
     public static void main(String[] args) {
 
