@@ -1,6 +1,7 @@
 package mathTools;
 
 import component.DoublePoint;
+import org.opencv.core.Mat;
 
 public class MathTools {
 
@@ -181,5 +182,32 @@ public class MathTools {
     public static double dotProduct(final DoublePoint p1, final DoublePoint p2) {
 
         return p1.x * p2.x + p1.y * p2.y;
+    }
+
+    public static double calculateAngleToXAxis(
+            final DoublePoint center, final DoublePoint point) {
+
+        double delta_x = point.x - center.x;
+        double delta_y = point.y - center.y;
+
+        double angle = Math.atan2(delta_y, delta_x);
+
+        if (angle < 0.0) {
+            angle += 2 * Math.PI;
+        }
+
+        return angle;
+    }
+
+    // Below is for test
+    public static void main(String[] args) {
+
+        DoublePoint center = new DoublePoint(0,0);
+        DoublePoint point = new DoublePoint(1,-1);
+
+        double theta = calculateAngleToXAxis(center, point);
+
+        System.out.println(theta);
+        System.out.println(-Math.PI /4);
     }
 }

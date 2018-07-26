@@ -82,7 +82,7 @@ class CubicBezierCurveToArcsTools {
 
         /*Step 7: Calculate t*/
         double t = findT(A, controlPointA, controlPointB, B, H, G,
-                MathTools.EPSILON, startT, endT);
+                0.01, startT, endT);
 
         /*Step 8: Calculate d*/
         DoublePoint Q_t = MathTools.calculatePointOnBezierCurve(
@@ -92,7 +92,10 @@ class CubicBezierCurveToArcsTools {
         /*Step 9: Judge if the current approximation meets the allowable error*/
         if (d <= allowableError) {
 
-            Arc arc = new Arc(center, radius, 0.0, 0.0);
+            double startAngle = MathTools.calculateAngleToXAxis(center, newA);
+            double endAngle = MathTools.calculateAngleToXAxis(center, newB);
+
+            Arc arc = new Arc(center, radius, startAngle, endAngle);
             arcs.add(arc);
 
         } else {
@@ -183,7 +186,7 @@ class CubicBezierCurveToArcsTools {
         }
 
         WriteFile.WriteCurveAndFittedCircle(
-                "2.html", "hahaha",
+                "4.html", "hahaha",
                 ListOfCurveArrays, "#FF0000",
                 arcsList, "#0000FF");
 

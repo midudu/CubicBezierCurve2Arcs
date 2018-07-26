@@ -108,7 +108,7 @@ public class WriteFile {
             ArrayList<ArrayList<Curve[]>> listOfCurveArrays, String color)
             throws IOException {
 
-        outputStream.write("  <path d=\"".getBytes());
+        outputStream.write("          <path d=\"".getBytes());
 
         Curve[] curves = null;
         String currentCommand = null;
@@ -131,14 +131,14 @@ public class WriteFile {
 
                     if (curves[k].getKind() == Curve.CurveKind.Line) {
 
-                        currentCommand = "           L "
+                        currentCommand = "                   L "
                                 + curves[k].getB().getY() + " "
                                 + curves[k].getB().getX() + "\n";
                         outputStream.write(currentCommand.getBytes());
 
                     } else if (curves[k].getKind() == Curve.CurveKind.Bezier) {
 
-                        currentCommand = "           C "
+                        currentCommand = "                   C "
                                 + curves[k].getControlPointA().getY() + " "
                                 + curves[k].getControlPointA().getX() + " "
                                 + curves[k].getControlPointB().getY() + " "
@@ -151,7 +151,7 @@ public class WriteFile {
             }
         }
 
-        String string = "           Z\" stroke=\"" + color + "\" fill=\"none\"/>\n";
+        String string = "                   Z\" stroke=\"" + color + "\" fill=\"none\"/>\n";
         outputStream.write(string.getBytes());
     }
 
@@ -163,7 +163,7 @@ public class WriteFile {
         for (ArrayList<Arc> arcArrayList : arcs) {
             for (Arc arc : arcArrayList) {
 
-                String content = "  <circle cx=\"";
+                String content = "          <circle cx=\"";
                 content += arc.center.y;
                 content += "\" cy=\"";
                 content += arc.center.x;
