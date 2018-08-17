@@ -2,8 +2,8 @@ package component;
 
 public class DoublePoint {
 
-    public double x;
-    public double y;
+    private double x;
+    private double y;
 
     public DoublePoint(double x, double y) {
 
@@ -13,5 +13,13 @@ public class DoublePoint {
 
     public String toString() {
         return String.valueOf(x) + " " + String.valueOf(y);
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
     }
 }

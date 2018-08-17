@@ -1,109 +1,112 @@
 package mathTools;
 
 import component.DoublePoint;
-import org.opencv.core.Mat;
 
 public class MathTools {
 
-    public static double EPSILON = 1e-9;
+    public static final double EPSILON = 1e-9;
 
-    public static double crossProductOfThreePoints(
-            final DoublePoint p0, final DoublePoint p1, final DoublePoint p2) {
 
-        double x1 = p1.x - p0.x;
-        double y1 = p1.y - p0.y;
-        double x2 = p2.x - p0.x;
-        double y2 = p2.y - p0.y;
+    public static DoublePoint calculateIntersectionOfTwoLine(
+            DoublePoint startPointA, DoublePoint endPointA,
+            DoublePoint startPointB, DoublePoint endPointB) {
+
+        double A1 = MathTools.crossProductOfThreePoints(
+                startPointA, endPointA, startPointB);
+        double A2 = MathTools.crossProductOfThreePoints(
+                startPointA, endPointA, endPointB);
+        double A3 = MathTools.crossProductOfThreePoints(
+                startPointA, startPointB, endPointB);
+
+        assert (Math.abs(A2 - A1) > MathTools.EPSILON);
+
+        double t = A3 / (A2 - A1);
+
+        return MathTools.calculateIntervalPoint(t, startPointA, endPointA);
+    }
+
+
+    private static double crossProductOfThreePoints(
+            DoublePoint p0, DoublePoint p1, DoublePoint p2) {
+
+        double x1 = p1.getX() - p0.getX();
+        double y1 = p1.getY() - p0.getY();
+        double x2 = p2.getX() - p0.getX();
+        double y2 = p2.getY() - p0.getY();
 
         return x1 * y2 - x2 * y1;
     }
 
-    public static DoublePoint calculateIntervalPoint(
-            final double lambda, final DoublePoint A, final DoublePoint B) {
+
+    private static DoublePoint calculateIntervalPoint(
+            double lambda, DoublePoint A, DoublePoint B) {
 
         return new DoublePoint(
-                A.x + lambda * (B.x - A.x), A.y + lambda * (B.y - A.y));
+                A.getX() + lambda * (B.getX() - A.getX()),
+                A.getY() + lambda * (B.getY() - A.getY())
+        );
     }
 
-    public static DoublePoint calculateIntersectionOfTwoLine(
-            final DoublePoint start_point_A, final DoublePoint end_point_A,
-            final DoublePoint start_point_B, final DoublePoint end_point_B)
-            throws Exception {
 
-        double A1 = crossProductOfThreePoints(
-                start_point_A, end_point_A, start_point_B);
-        double A2 = crossProductOfThreePoints(
-                start_point_A, end_point_A, end_point_B);
-        double A3 = crossProductOfThreePoints(
-                start_point_A, start_point_B, end_point_B);
-
-        if (Math.abs(A2 - A1) <= MathTools.EPSILON) {
-            throw new Exception("Wrong");
-        }
-
-        double t = A3 / (A2 - A1);
-
-        return calculateIntervalPoint(t, start_point_A, end_point_A);
-    }
-
-    public static double euclideanDistance(
-            final DoublePoint p, final DoublePoint q) {
+    public static double euclideanDistance(DoublePoint p, DoublePoint q) {
 
         return Math.sqrt(
-                (p.x - q.x) * (p.x - q.x) + (p.y - q.y) * (p.y - q.y));
+                (p.getX() - q.getX()) * (p.getX() - q.getX())
+                        + (p.getY() - q.getY()) * (p.getY() - q.getY()));
     }
 
-    public static DoublePoint findInCenterPoint(
-            final DoublePoint A, final DoublePoint B, final DoublePoint C) {
 
-        double a = euclideanDistance(B, C);
-        double b = euclideanDistance(A, C);
-        double c = euclideanDistance(A, B);
+    public static DoublePoint findInCenterPointOfTriangle(
+            DoublePoint p1, DoublePoint p2, DoublePoint p3) {
 
-        double x1 = A.x;
-        double y1 = A.y;
+        double a = MathTools.euclideanDistance(p2, p3);
+        double b = MathTools.euclideanDistance(p1, p3);
+        double c = MathTools.euclideanDistance(p1, p2);
 
-        double x2 = B.x;
-        double y2 = B.y;
+        double x1 = p1.getX();
+        double y1 = p1.getY();
 
-        double x3 = C.x;
-        double y3 = C.y;
+        double x2 = p2.getX();
+        double y2 = p2.getY();
+
+        double x3 = p3.getX();
+        double y3 = p3.getY();
 
         return new DoublePoint((a * x1 + b * x2 + c * x3) / (a + b + c),
                 (a * y1 + b * y2 + c * y3) / (a + b + c));
     }
 
-    public static double getRadiusAndCenterByThreePointsOnCircle(
-            final DoublePoint p1, final DoublePoint p2, final DoublePoint p3,
-            DoublePoint center) {
 
-        double a = 2.0 * (p2.x - p1.x);
-        double b = 2.0 * (p2.y - p1.y);
-        double c = p2.x * p2.x + p2.y * p2.y - p1.x * p1.x - p1.y * p1.y;
-        double d = 2.0 * (p3.x - p2.x);
-        double e = 2.0 * (p3.y - p2.y);
-        double f = p3.x * p3.x + p3.y * p3.y - p2.x * p2.x - p2.y * p2.y;
+    public static DoublePoint solveLinearEquationsOfTwoUnknownVariables(
+            double a11, double a12, double b1,
+            double a21, double a22, double b2) {
 
-        double x = (b * f - e * c) / (b * d - e * a);
-        double y = (d * c - a * f) / (b * d - e * a);
+        double x =
+                calculateSecondOrderDeterminant(b1, a12, b2, a22) /
+                        calculateSecondOrderDeterminant(a11, a12, a21, a22);
 
-        if (center == null) {
-            throw new NullPointerException();
-        } else {
-            center.x = x;
-            center.y = y;
-        }
+        double y =
+                calculateSecondOrderDeterminant(a11, b1, a21, b2) /
+                        calculateSecondOrderDeterminant(a11, a12, a21, a22);
 
-        return Math.sqrt((x - p1.x) * (x - p1.x) + (y - p1.y) * (y - p1.y));
+        return new DoublePoint(x, y);
     }
 
-    public static DoublePoint calculateUnitTangentVectorOfCircle(
-            final DoublePoint center, final DoublePoint pointOnCircle) {
 
-        double x1 = center.x;
-        double y1 = center.y;
-        double x2 = pointOnCircle.x;
-        double y2 = pointOnCircle.y;
+    private static double calculateSecondOrderDeterminant(
+            double a11, double a12, double a21, double a22) {
+
+        return a11 * a22 - a12 * a21;
+    }
+
+
+    public static DoublePoint CalculateUnitTangentVectorOfCircle(
+            DoublePoint center, DoublePoint pointOnCircle) {
+
+        double x1 = center.getX();
+        double y1 = center.getY();
+        double x2 = pointOnCircle.getX();
+        double y2 = pointOnCircle.getY();
 
         if (Math.abs(x1 - x2) <= MathTools.EPSILON) {
             if (y1 < y2) {
@@ -115,121 +118,25 @@ public class MathTools {
 
         double radius = MathTools.euclideanDistance(center, pointOnCircle);
 
-        double delta_x = x2 - x1;
-        double delta_y = y2 - y1;
+        double deltaX = x2 - x1;
+        double deltaY = y2 - y1;
 
-        return new DoublePoint(delta_y / radius, -delta_x / radius);
+        return new DoublePoint(deltaY / radius, 0.0 - deltaX / radius);
     }
 
-    public static DoublePoint calculateUnitTangentVectorOfBezierCurve(
-            final DoublePoint A, final DoublePoint controlPointA,
-            final DoublePoint controlPointB, final DoublePoint B,
-            final double t) throws IndexOutOfBoundsException {
 
-        if (t < 0.0 || t > 1.0) {
-            throw new IndexOutOfBoundsException();
-        }
+    public static double dotProductOfTwoPoints(DoublePoint p1, DoublePoint p2) {
 
-        double x0 = A.x;
-        double y0 = A.y;
-        double x1 = controlPointA.x;
-        double y1 = controlPointA.y;
-        double x2 = controlPointB.x;
-        double y2 = controlPointB.y;
-        double x3 = B.x;
-        double y3 = B.y;
-
-        double s = 1.0 - t;
-
-        double dy_dt = -3 * y0 * s * s + 3 * y1 * (s * s - 2 * t * s)
-                + 3 * y2 * (2 * t * s - t * t) + 3 * y3 * t * t;
-        double dx_dt = -3 * x0 * s * s + 3 * x1 * (s * s - 2 * t * s)
-                + 3 * x2 * (2 * t * s - t * t) + 3 * x3 * t * t;
-
-        if (Math.abs(dx_dt) <= MathTools.EPSILON) {
-            if (dy_dt > 0.0) {
-                return new DoublePoint(0, 1);
-            } else {
-                return new DoublePoint(0, -1);
-            }
-        }
-
-        double hypotenuse = Math.sqrt(dx_dt * dx_dt + dy_dt * dy_dt);
-
-        return new DoublePoint(dx_dt / hypotenuse, dy_dt / hypotenuse);
+        return p1.getX() * p2.getX() + p1.getY() * p2.getY();
     }
 
-    public static DoublePoint calculatePointOnBezierCurve(
-            final DoublePoint A, final DoublePoint controlPointA,
-            final DoublePoint controlPointB, final DoublePoint B,
-            final double t) throws IndexOutOfBoundsException {
 
-        if (t < 0.0 || t > 1.0) {
-            throw new IndexOutOfBoundsException();
-        }
+    public static double calculateAngleRelativeToCircleCenter(
+            DoublePoint center, DoublePoint point) {
 
-        double s = 1.0 - t;
+        double deltaX = point.getX() - center.getX();
+        double deltaY = point.getY() - center.getY();
 
-        double x = s * s * s * A.x + 3 * t * s * s * controlPointA.x
-                + 3 * t * t * s * controlPointB.x + t * t * t * B.x;
-
-        double y = s * s * s * A.y + 3 * t * s * s * controlPointA.y
-                + 3 * t * t * s * controlPointB.y + t * t * t * B.y;
-
-        return new DoublePoint(x, y);
-    }
-
-    public static double dotProduct(final DoublePoint p1, final DoublePoint p2) {
-
-        return p1.x * p2.x + p1.y * p2.y;
-    }
-
-    public static double calculateAngleToXAxis(
-            final DoublePoint center, final DoublePoint point) {
-
-        double delta_x = point.x - center.x;
-        double delta_y = point.y - center.y;
-
-        return Math.atan2(delta_y, delta_x);
-    }
-
-    public static DoublePoint calculateDerivativeOnBezierCurve(
-            final DoublePoint A, final DoublePoint controlPointA,
-            final DoublePoint controlPointB, final DoublePoint B,
-            final double t) {
-
-        if (t < 0.0 || t > 1.0) {
-            throw new IndexOutOfBoundsException();
-        }
-
-        double x0 = A.x;
-        double y0 = A.y;
-        double x1 = controlPointA.x;
-        double y1 = controlPointA.y;
-        double x2 = controlPointB.x;
-        double y2 = controlPointB.y;
-        double x3 = B.x;
-        double y3 = B.y;
-
-        double s = 1.0 - t;
-
-        double dy_dt = -3 * y0 * s * s + 3 * y1 * (s * s - 2 * t * s)
-                + 3 * y2 * (2 * t * s - t * t) + 3 * y3 * t * t;
-        double dx_dt = -3 * x0 * s * s + 3 * x1 * (s * s - 2 * t * s)
-                + 3 * x2 * (2 * t * s - t * t) + 3 * x3 * t * t;
-
-        return new DoublePoint(dx_dt, dy_dt);
-    }
-
-    // Below is for test
-    public static void main(String[] args) {
-
-        DoublePoint center = new DoublePoint(0,0);
-        DoublePoint point = new DoublePoint(1,-1);
-
-        double theta = calculateAngleToXAxis(center, point);
-
-        System.out.println(theta);
-        System.out.println(-Math.PI /4);
+        return Math.atan2(deltaY, deltaX);
     }
 }

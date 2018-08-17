@@ -3,19 +3,43 @@ package component;
 
 public class Arc {
 
-    public DoublePoint center;
+    private DoublePoint center;
 
-    public double radius;
+    private double radius;
 
-    public double startAngle;
+    private double startAngle;
 
-    public double endAngle;
+    private double endAngle;
 
-    public Arc(DoublePoint center, double radius, double startAngle, double endAngle) {
+    private boolean clockwiseFlag;
+
+    public Arc(DoublePoint center, double radius,
+               double startAngle, double endAngle, boolean clockwiseFlag) {
 
         this.center = center;
         this.radius = radius;
         this.startAngle = startAngle;
         this.endAngle = endAngle;
+        this.clockwiseFlag = clockwiseFlag;
+    }
+
+    public double getEndAngle() {
+        return endAngle;
+    }
+
+    public double getRadius() {
+        return radius;
+    }
+
+    public double getStartAngle() {
+        return startAngle;
+    }
+
+    public DoublePoint getCenter() {
+        return center;
+    }
+
+    public boolean getClockwiseFlag() {
+        return clockwiseFlag;
     }
 }
