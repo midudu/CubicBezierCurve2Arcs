@@ -6,6 +6,10 @@ import component.DoublePoint;
 
 import java.util.ArrayList;
 
+/**
+ * This class is to test the {@code BezierCurveToArcs} class and show examples
+ * of how to use the methods in {@code BezierCurveToArcs}.
+ */
 public class TestBezierCurveToArcs {
 
     public static void main(String[] args) {
