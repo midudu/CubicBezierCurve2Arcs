@@ -22,6 +22,7 @@ import java.util.ArrayList;
  */
 public class BezierCurveToArcs {
 
+    /* A constant which represents the maximum allowable error of finding t */
     private static final double AllOWABLE_ERROR_FOR_FIND_T = 0.001;
 
     /**

@@ -13,39 +13,67 @@ import java.util.ArrayList;
  */
 public class WriteSVGFile {
 
+    /**
+     * To write the original Bezier curve and the fitted arcs in an .html file
+     * with inline svg element.
+     *
+     * @param targetFilePath the target file path which must end with ".html"
+     * @param A              the start point of the Bezier curve
+     * @param controlPointA  the first control point of the Bezier curve which
+     *                       is close to {@code A}
+     * @param controlPointB  the second control point of the Bezier curve which
+     *                       is close to {@code B}
+     * @param B              the end point of the Bezier curve
+     * @param colorOfBezier  the color of the Bezier curve to be painted. The
+     *                       format is like "#0000FF". The {@code colorOfBezier}
+     *                       string must begin with '#' and have another 6
+     *                       characters in '0'-'9','A','B','C','D','E' and 'F'.
+     *                       Every two characters make up of a red, green or
+     *                       blue value. The first two characters represent the
+     *                       value of red; the middle two characters represent
+     *                       the value of green and the last two characters
+     *                       represent the value of blue.
+     * @param arcs           a series of fitted curves
+     * @param colorOfArcs    the color of the fitted arcs to be painted of which
+     *                       the format is similar to {@code colorOfBezier}
+     * @throws IOException when problems are met during file output
+     */
     public static void WriteBezierCurveAndFittedArcs(
-            String dstFilePath,
+            String targetFilePath,
             DoublePoint A, DoublePoint controlPointA,
             DoublePoint controlPointB, DoublePoint B, String colorOfBezier,
             ArrayList<Arc> arcs, String colorOfArcs) throws IOException {
 
-        if (!dstFilePath.contains(".html")
-                || dstFilePath.indexOf(".html") != dstFilePath.length() - 5) {
+        if (!targetFilePath.contains(".html")
+                || targetFilePath.indexOf(".html") != targetFilePath.length() - 5) {
 
             System.out.println("Check File Path!");
             return;
         }
 
-        if (!judgeIfColorStringMeetsCondition(colorOfBezier)
-                || !judgeIfColorStringMeetsCondition(colorOfArcs)) {
+        if (!judgeIfColorStringHasCorrectFormat(colorOfBezier)
+                || !judgeIfColorStringHasCorrectFormat(colorOfArcs)) {
 
             System.out.println("Check Color Format!");
             return;
         }
 
 
-        Files.deleteIfExists(Paths.get(dstFilePath));
-
+        Files.deleteIfExists(Paths.get(targetFilePath));
         OutputStream outputStream
-                = Files.newOutputStream(Paths.get(dstFilePath), StandardOpenOption.CREATE);
+                = Files.newOutputStream(Paths.get(targetFilePath), StandardOpenOption.CREATE);
 
+        /* Write header part */
         WriteHeaderPartForHtmlWithInlineSvg(outputStream);
 
+        /* Write Bezier curve */
         WriteBezierCurveForHtmlWithInlineSvg(
                 outputStream, A, controlPointA, controlPointB, B, colorOfBezier);
 
+        /* Write fitted arcs */
         WriteArcsForHtmlWithInlineSvg(outputStream, arcs, colorOfArcs);
 
+        /* Write tail part */
         WriteTailPartForHtmlWithInlineSvg(outputStream);
 
         outputStream.close();
@@ -53,7 +81,13 @@ public class WriteSVGFile {
         System.out.println("Completed!");
     }
 
-    private static boolean judgeIfColorStringMeetsCondition(String color) {
+    /**
+     * To judge if the input parameter has a correct format.
+     *
+     * @param color a {@code String} object which represent the color
+     * @return true for correct and false for wrong
+     */
+    private static boolean judgeIfColorStringHasCorrectFormat(String color) {
 
         if (color == null || color.length() != 7 || color.charAt(0) != '#') {
             return false;
@@ -72,6 +106,12 @@ public class WriteSVGFile {
         return true;
     }
 
+    /**
+     * To write the header part of the .html file.
+     *
+     * @param outputStream an {@code OutputStream} object for output
+     * @throws IOException when problems are met during file output
+     */
     private static void WriteHeaderPartForHtmlWithInlineSvg(
             OutputStream outputStream) throws IOException {
 
@@ -95,10 +135,36 @@ public class WriteSVGFile {
         outputStream.flush();
     }
 
+    /**
+     * To write a Bezier curve in a svg element.
+     *
+     * @param outputStream  an {@code OutputStream} object for output
+     * @param A             the start point of the Bezier curve
+     * @param controlPointA the first control point of the Bezier curve which
+     *                      is close to {@code A}
+     * @param controlPointB the second control point of the Bezier curve which
+     *                      is close to {@code B}
+     * @param B             the end point of the Bezier curve
+     * @param colorOfBezier the color of the Bezier curve to be painted. The
+     *                      format is like "#0000FF". The {@code colorOfBezier}
+     *                      string must begin with '#' and have another 6
+     *                      characters in '0'-'9','A','B','C','D','E' and 'F'.
+     *                      Every two characters make up of a red, green or
+     *                      blue value. The first two characters represent the
+     *                      value of red; the middle two characters represent
+     *                      the value of green and the last two characters
+     *                      represent the value of blue.
+     * @throws IOException when problems are met during file output
+     */
     private static void WriteBezierCurveForHtmlWithInlineSvg(
             OutputStream outputStream, DoublePoint A, DoublePoint controlPointA,
             DoublePoint controlPointB, DoublePoint B, String colorOfBezier)
             throws IOException {
+
+        if (A == null || controlPointA == null
+                || controlPointB == null || B == null) {
+            return;
+        }
 
         String content = "           <path d=\"\n"
                 + "                    M "
@@ -119,9 +185,29 @@ public class WriteSVGFile {
         outputStream.flush();
     }
 
+    /**
+     * To write arcs in a svg element.
+     *
+     * @param outputStream an {@code OutputStream} object for output
+     * @param arcs         a series of fitted arcs
+     * @param colorOfArcs  the color of the fitted arcs to be painted. The
+     *                     format is like "#0000FF". The {@code colorOfBezier}
+     *                     string must begin with '#' and have another 6
+     *                     characters in '0'-'9','A','B','C','D','E' and 'F'.
+     *                     Every two characters make up of a red, green or
+     *                     blue value. The first two characters represent the
+     *                     value of red; the middle two characters represent
+     *                     the value of green and the last two characters
+     *                     represent the value of blue.
+     * @throws IOException when problems are met during file output
+     */
     private static void WriteArcsForHtmlWithInlineSvg(
             OutputStream outputStream, ArrayList<Arc> arcs, String colorOfArcs)
             throws IOException {
+
+        if (arcs == null || arcs.isEmpty()) {
+            return;
+        }
 
         String content = "           <path d=\"\n";
 
@@ -150,9 +236,9 @@ public class WriteSVGFile {
                     + arc.getRadius() + " 0 0 ");
 
             if (arc.getClockwiseFlag()) {
-                content += "1 ";
-            } else {
                 content += "0 ";
+            } else {
+                content += "1 ";
             }
 
             content += String.valueOf(endXPosition) + " "
@@ -167,6 +253,12 @@ public class WriteSVGFile {
         outputStream.flush();
     }
 
+    /**
+     * To write the tail part of the .html file.
+     *
+     * @param outputStream an {@code OutputStream} object for output
+     * @throws IOException when problems are met during file output
+     */
     private static void WriteTailPartForHtmlWithInlineSvg(
             OutputStream outputStream) throws IOException {
 
