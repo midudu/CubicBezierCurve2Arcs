@@ -3,6 +3,9 @@ package mathTools.cubicBezierTools;
 import component.DoublePoint;
 import mathTools.MathTools;
 
+/**
+ * This class contains mathematical methods which are only for Bezier curves.
+ */
 public class CubicBezierTools {
 
     /**
@@ -33,7 +36,18 @@ public class CubicBezierTools {
         return new DoublePoint(x, y);
     }
 
-    public static DoublePoint CalculateUnitTangentVectorOfBezierCurve(
+    /**
+     * To calculate the unit tangent vector of a point on the bezier curve.
+     *
+     * @param A             the start point of the Bezier curve
+     * @param controlPointA the control point which is close to the start point
+     * @param controlPointB the control point which is close to the end point
+     * @param B             the end point of the Bezier curve
+     * @param t             a parameter to determine the position on curve
+     *                      which must lies in the range [0, 1]
+     * @return the unit tangent vector of the point on the Bezier curve
+     */
+    public static DoublePoint calculateUnitTangentVectorOfBezierCurve(
             DoublePoint A, DoublePoint controlPointA,
             DoublePoint controlPointB, DoublePoint B, double t) {
 
@@ -69,7 +83,22 @@ public class CubicBezierTools {
         return new DoublePoint(dx_dt / hypotenuse, dy_dt / hypotenuse);
     }
 
-
+    /**
+     * Let P0, P1, P2, P3 be the start point, first control point, second
+     * control point and the end point of the Bezier curve. For any point Q on
+     * the Bezier curve, Q(t) = P0*(1-t)^3 + P1*3t(1-t)^2 + P2*3t^2(1-t) + P3*t^3
+     * = (x(t), y(t)). This method is to calculate Q'(t) = (x'(t), y'(t)).
+     *
+     * @param A             the start point of the Bezier curve
+     * @param controlPointA the control point which is close to the start
+     *                      point
+     * @param controlPointB the control point which is close to the end
+     *                      point
+     * @param B             the end point
+     * @param t             a parameter to determine the position on the
+     *                      Bezier curve
+     * @return Q'(t) = (x'(t), y'(t))
+     */
     public static DoublePoint calculateDerivativeOnBezierCurve(
             DoublePoint A, DoublePoint controlPointA,
             DoublePoint controlPointB, DoublePoint B, double t) {
@@ -94,5 +123,4 @@ public class CubicBezierTools {
 
         return new DoublePoint(dx_dt, dy_dt);
     }
-
 }

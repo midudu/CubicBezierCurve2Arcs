@@ -85,11 +85,11 @@ public class BezierCurveToArcs {
         /* Step 2: Calculate the unit tangent vector of the Bezier curve on the
         start point and the end point */
         DoublePoint unitTangentVector0
-                = CubicBezierTools.CalculateUnitTangentVectorOfBezierCurve(
+                = CubicBezierTools.calculateUnitTangentVectorOfBezierCurve(
                 A, controlPointA, controlPointB, B, startT);
 
         DoublePoint unitTangentVector1
-                = CubicBezierTools.CalculateUnitTangentVectorOfBezierCurve(
+                = CubicBezierTools.calculateUnitTangentVectorOfBezierCurve(
                 A, controlPointA, controlPointB, B, endT);
 
         DoublePoint adjacentNewA
@@ -132,7 +132,7 @@ public class BezierCurveToArcs {
                 a11, a12, b1, a21, a22, b2);
 
         /* Step 6: Calculate the unit tangent vector of the circle on point G */
-        DoublePoint H = MathTools.CalculateUnitTangentVectorOfCircle(center1, G);
+        DoublePoint H = MathTools.calculateUnitTangentVectorOfCircle(center1, G);
 
         /* Step 7: Calculate t */
         double t = findTWithNewtonAndRaphsonMethod(
