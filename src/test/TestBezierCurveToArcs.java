@@ -3,7 +3,9 @@ package test;
 import bezierCurveToArcs.BezierCurveToArcs;
 import component.Arc;
 import component.DoublePoint;
+import writeSVGFile.WriteSVGFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -12,7 +14,7 @@ import java.util.ArrayList;
  */
 public class TestBezierCurveToArcs {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         DoublePoint A = new DoublePoint(40, 112.5);
         DoublePoint controlPointA = new DoublePoint(62, 112.775);
@@ -23,6 +25,10 @@ public class TestBezierCurveToArcs {
         BezierCurveToArcs.convertACubicBezierCurveToArcs(
                 A, controlPointA, controlPointB, B, 0.1, arcs);
 
-        System.out.println("Completed!");
+        String filePath = "E:\\Java_Projects\\CubicBezierCurveToArcs\\1.html";
+
+        WriteSVGFile.WriteBezierCurveAndFittedArcs(
+                filePath, A, controlPointA, controlPointB, B, "#0000FF",
+                arcs, "#FF0000");
     }
 }

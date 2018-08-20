@@ -288,6 +288,15 @@ public class BezierCurveToArcs {
         return MathTools.euclideanDistance(Q_t, G);
     }
 
+    /**
+     * To generate an {@code Arc} object according to the center, start point
+     * and the end point.
+     *
+     * @param center     the center of the circle which makes the current arc on it
+     * @param startPoint the start point of the arc
+     * @param endPoint   the end point of the arc
+     * @return an Arc object
+     */
     private static Arc generateArc(
             DoublePoint center, DoublePoint startPoint, DoublePoint endPoint) {
 
