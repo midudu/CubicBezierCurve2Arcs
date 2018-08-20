@@ -25,7 +25,8 @@ public class TestBezierCurveToArcs {
         BezierCurveToArcs.convertACubicBezierCurveToArcs(
                 A, controlPointA, controlPointB, B, 0.1, arcs);
 
-        String filePath = "E:\\Java_Projects\\CubicBezierCurveToArcs\\1.html";
+        String filePath
+                = "E:\\Java_Projects\\CubicBezierCurveToArcs\\example\\1.html";
 
         WriteSVGFile.WriteBezierCurveAndFittedArcs(
                 filePath, A, controlPointA, controlPointB, B, "#0000FF",
