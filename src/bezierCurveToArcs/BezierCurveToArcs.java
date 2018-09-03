@@ -170,6 +170,16 @@ public class BezierCurveToArcs {
         double fn = MathTools.dotProductOfTwoPoints(Q_tn, H)
                 - MathTools.dotProductOfTwoPoints(G, H);
 
+        DoublePoint Q_t0 = CubicBezierTools.pointOnBezierCurve(startT,
+                A, controlPointA, controlPointB, B);
+        double f_A0 = MathTools.dotProductOfTwoPoints(Q_t0, H)
+                - MathTools.dotProductOfTwoPoints(G, H);
+
+        DoublePoint Q_t1 = CubicBezierTools.pointOnBezierCurve(endT,
+                A, controlPointA, controlPointB, B);
+        double f_A1 = MathTools.dotProductOfTwoPoints(Q_t1, H)
+                - MathTools.dotProductOfTwoPoints(G, H);
+
         while (Math.abs(fn) > allowableError) {
 
             DoublePoint d_Q_tn

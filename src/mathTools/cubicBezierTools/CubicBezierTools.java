@@ -23,7 +23,6 @@ public class CubicBezierTools {
             double t, DoublePoint A, DoublePoint controlPointA,
             DoublePoint controlPointB, DoublePoint B) {
 
-        assert (t >= 0.0 && t <= 1.0);
 
         double s = 1 - t;
 
@@ -102,8 +101,6 @@ public class CubicBezierTools {
     public static DoublePoint calculateDerivativeOnBezierCurve(
             DoublePoint A, DoublePoint controlPointA,
             DoublePoint controlPointB, DoublePoint B, double t) {
-
-        assert (t >= 0.0 && t <= 1.0);
 
         double x0 = A.getX();
         double y0 = A.getY();
